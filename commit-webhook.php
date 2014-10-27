@@ -15,7 +15,7 @@ $payload = array(
 	'channel'    => $channel,
 	'username'   => 'vip-bot',
 	'text'       => "[VIP][{$_REQUEST['theme']}] Commit Notification (r{$_REQUEST['revision']}) by {$_REQUEST['committer']}",
-	'icon_emoji' => ':warning:',
+	'icon_emoji' => ':zap:',
 );
 
 $payload = array_map( 'urlencode', $payload );
