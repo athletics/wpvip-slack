@@ -8,9 +8,8 @@
 
 $accounts = array(
 	array(
-		'team' => '',
+		'endpoint' => '',
 		'channel' => '',
-		'token' => '',
 	),
 );
 
@@ -19,8 +18,6 @@ if ( ! isset( $_REQUEST['repo'] ) || $_REQUEST['repo'] !== 'vip' ) {
 }
 
 array_map( function ( $account ) {
-
-	$endpoint = "https://{$account['team']}.slack.com/services/hooks/incoming-webhook?token={$account['token']}";
 
 	$payload = array(
 		'channel'    => $account['channel'],
@@ -33,7 +30,7 @@ array_map( function ( $account ) {
 
 	$ch = curl_init();
 
-	curl_setopt( $ch, CURLOPT_URL, $endpoint );
+	curl_setopt( $ch, CURLOPT_URL, $account['endpoint'] );
 	curl_setopt( $ch, CURLOPT_POST, count( $payload ) );
 	curl_setopt( $ch, CURLOPT_POSTFIELDS, 'payload=' . json_encode( $payload ) );
 
