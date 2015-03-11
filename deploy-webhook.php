@@ -6,26 +6,39 @@
  * @see http://lobby.vip.wordpress.com/2014/03/03/deploy-webhook/
  */
 
-$channel  = '';
-$endpoint = '';
-
-if ( ! isset( $_REQUEST['repo'] ) || $_REQUEST['repo'] !== 'vip' ) return;
-
-$payload = array(
-	'channel'    => $channel,
-	'username'   => 'vip-bot',
-	'text'       => "[VIP][{$_REQUEST['theme']}] Deploy Notification (r{$_REQUEST['deployed_revision']}) by {$_REQUEST['deployer']}",
-	'icon_emoji' => ':checkered_flag:',
+$accounts = array(
+	array(
+		'team' => '',
+		'channel' => '',
+		'token' => '',
+	),
 );
 
-$payload = array_map( 'urlencode', $payload );
+if ( ! isset( $_REQUEST['repo'] ) || $_REQUEST['repo'] !== 'vip' ) {
+	return;
+}
 
-$ch = curl_init();
+array_map( function ( $account ) {
 
-curl_setopt( $ch, CURLOPT_URL, $endpoint );
-curl_setopt( $ch, CURLOPT_POST, count( $payload ) );
-curl_setopt( $ch, CURLOPT_POSTFIELDS, 'payload=' . json_encode( $payload ) );
+	$endpoint = "https://{$account['team']}.slack.com/services/hooks/incoming-webhook?token={$account['token']}";
 
-$result = curl_exec( $ch );
+	$payload = array(
+		'channel'    => $account['channel'],
+		'username'   => 'vip-bot',
+		'text'       => "[VIP][{$_REQUEST['theme']}] Deploy Notification (r{$_REQUEST['deployed_revision']}) by {$_REQUEST['deployer']}",
+		'icon_emoji' => ':checkered_flag:',
+	);
 
-curl_close( $ch );
+	$payload = array_map( 'urlencode', $payload );
+
+	$ch = curl_init();
+
+	curl_setopt( $ch, CURLOPT_URL, $endpoint );
+	curl_setopt( $ch, CURLOPT_POST, count( $payload ) );
+	curl_setopt( $ch, CURLOPT_POSTFIELDS, 'payload=' . json_encode( $payload ) );
+
+	$result = curl_exec( $ch );
+
+	curl_close( $ch );
+
+}, $accounts );
